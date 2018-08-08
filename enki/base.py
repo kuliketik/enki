@@ -1,58 +1,65 @@
+import tweepy
+import requests
+from bs4 import BeautifulSoup as bs 
+
+
+
+
 class Collector:
 	def __init__(self, **kwargs):
+
+		auth = tweepy.OAuthHandler(kwargs['consumer_key'], kwargs['consumer_secret'])
+		auth.set_access_token(kwargs['token_key'], kwargs['token_secret'])
 		
-		self.key = 
-		self.token_secret = 
-		self.key_secret = 
-		self.twit = do_auth(token=kwargs['token'], 
-							key=kwargs['key'], 
-							key_secret=kwargs['token_secret'], 
-							token_secret=kwargs['key_secret']
-)
+		try:
+			self.api = tweepy.API(auth)
+		except Exception as err:
+			raise ('otentifikasi gagal...')
 
-	def get_tweets(self, target):
-		for tweet in twit.get_tweet(likes=10, retweet=10, comments=10):
-			do_save(tweet)
+		
+		self.urls = []
+		self.target = None
 
 
-class TaskAdder:
-	def __init__(self) -> None:
-		self.tasks = []
-
-	def add_task(self, **kwargs):
+	def get_urls(self, **kwargs):
 		"""
-		argumen:
-			name: str
-			pattern: str
+		target: str
+		count: str
+		min_rt: int
+		min_fav: int
 		"""
-		self.tasks.append(dict(url=kwargs['url'], target=kwargs['target']))
+		
+		self.target = kwargs['target']
+
+		tweets = self.api.user_timeline(screen_name = kwargs['target'], count = kwargs['count'], include_rts = False)
+
+		min_rt = kwargs['min_rt']
+		min_fav = kwargs['min_fav']
+
+		for tweet in tweets:
+			if tweet.favorite_count >= min_fav or tweet.retweet_count >= min_rt:
+				self.urls.append(tweet.entities['urls'][0]['url'])
+
+
+	def parse_text(self):
+		if self.target is not None:
+			if self.target == 'TirtoID':
+				target_tag = 'content-text-editor'
+
+			elif self.target == 'kompascom':
+				target_tag = 'bla' # DUMMY
+
+		for url in self.urls:
+			
+			print('scraping {url}')			
+			html = requests.get(url).text
+			soup = bs(html, 'html.parser')
+			isi_konten = soup.find_all('div', target_tag)
+			
+			for konten in isi_konten:
+				print(konten.text)
+
 
 	def __getitem__(self, index):
-		return self.tasks[index]
+		return self.urls[index]
 
-
-class ExecTask:
-	def ___init__(self, jobs):
-		self.jobs = []
-
-	def add_job(self, jobs):
-		self.jobs = jobs 
-
-	def do_parse(self):
-		print('jobs: ', self.jobs)
-
-
-
-if __name__ == '__main__':
-	tasker = TaskAdder()
-	tasker.add_task(url='http://detik.com', target='div.target.bla')
-	tasker.add_task(url='http://detik.com', target='div.target.bla')
-
-	job_doer = ExecTask()
-	job_doer.add_job(tasker.tasks)
-	#job_doer.do_parse()
-
-	for task in tasker:
-		print(task['url'], '-->', task['target'])
-
-	#print(tasker.tasks)
