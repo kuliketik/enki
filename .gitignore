@@ -1,4 +1,5 @@
 env/*
+enki/config.py
 *.swp
 *.pyc
 __pycache__/*
