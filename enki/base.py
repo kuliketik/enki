@@ -13,6 +13,7 @@ class Collector:
 		
 		try:
 			self.api = tweepy.API(auth)
+			print('otentifikasi berhasil')
 		except Exception as err:
 			raise ('otentifikasi gagal...')
 
@@ -31,15 +32,18 @@ class Collector:
 		
 		self.target = kwargs['target']
 
-		tweets = self.api.user_timeline(screen_name = kwargs['target'], count = kwargs['count'], include_rts = False)
+		tweets = self.api.user_timeline(screen_name=kwargs['target'], count=kwargs['count'], include_rts=False)
 
 		min_rt = kwargs['min_rt']
 		min_fav = kwargs['min_fav']
 
 		for tweet in tweets:
 			if tweet.favorite_count >= min_fav or tweet.retweet_count >= min_rt:
-				self.urls.append(tweet.entities['urls'][0]['url'])
-
+				try:
+					self.urls.append(tweet.entities['urls'][0]['url']) # buggy
+				except:
+					continue
+				#print(tweet.entities['urls'][0]['url'])
 
 	def parse_text(self):
 		if self.target is not None:
@@ -51,8 +55,9 @@ class Collector:
 
 		for url in self.urls:
 			
-			print('scraping {url}')			
+			print(f'scraping {url}')			
 			html = requests.get(url).text
+
 			soup = bs(html, 'html.parser')
 			isi_konten = soup.find_all('div', target_tag)
 			
