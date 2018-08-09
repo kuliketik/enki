@@ -8,7 +8,7 @@ proyek ini bertujuan untuk mendapatkan pengetahuan mengenai engagement
 (like, comment) pada media online. 
 
 
-# media online target
+# Media online target
 
 - detik.com
 
@@ -20,9 +20,22 @@ proyek ini bertujuan untuk mendapatkan pengetahuan mengenai engagement
 
 - merdeka
 
-- kompas.com
+- kompas.com 
 
-- 
+# To do
+
+- Knowledge base target konten (lihat base.py:47)
+
+- Skema tabel SQL untuk menyimpan konten
+
+```
+id, media_name, twitter_handle, rt_count, fav_count, parsed_content
+``` 
+
+- Bersihkan konten dari sampah
+
+- Visualisasi dan analisis
+
 
 # Keluaran
 
@@ -39,5 +52,5 @@ Diharapkan data yang telah dikumpulkan dari project Enki dapat digunakan untuk
 penelitian terkait.
 
 
-- Whitepaper
+- Whitepaper/artikel
 
